@@ -73,6 +73,10 @@ class CameraFlipPanel(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_category = 'View'
 
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.type == 'VIEW_3D' and context.space_data.region_3d.view_perspective == 'CAMERA'
+
     def draw(self, context):
         self.layout.operator('view3d.flip_camera')
 
