@@ -47,14 +47,12 @@ class ToggleCameraFlip(bpy.types.Operator):
             # currently the only one supported but would like to enable creating temp. camera for viewing flipped version of viewport
             if context.space_data.region_3d.view_perspective == 'CAMERA':
                 # make a copy of the current camera
-                flipped_camera = current_camera.copy()
-                flipped_camera.data = current_camera.data.copy()
+                flipped_camera = bpy.data.objects.new(f'{current_camera.name}_flipped', current_camera.data.copy())
                 # TODO get the collection which this camera is in for this scene rather than adding flipped one to root of scene
                 context.scene.collection.objects.link(flipped_camera)
-                flipped_camera.name = f'{current_camera.name}_flipped'
-                flipped_camera.matrix_world = Matrix.Identity(4) @ Matrix.Scale(-1, 4, (1, 0, 0))
-                flipped_camera.hide_select = True
                 flipped_camera.parent = current_camera
+                flipped_camera.matrix_basis @= Matrix.Scale(-1, 4, (1, 0, 0))
+                flipped_camera.hide_select = True
             # store stuff so we can restore it later
             flipped_camera.data.flipped_camera_data.is_flipped_camera = True
             flipped_camera.data.flipped_camera_data.old_local_camera = context.space_data.camera
